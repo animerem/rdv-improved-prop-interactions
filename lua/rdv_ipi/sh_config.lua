@@ -8,6 +8,14 @@ RDV.LIBRARY.AddConfigOption("IPI::Enabling", {
     SECTION = "Main"
 })
 
+RDV.LIBRARY.AddConfigOption("IPI::CheckVersion", { 
+    TYPE = RDV.LIBRARY.TYPE.BL, 
+    CATEGORY = CAT,
+    DESCRIPTION = "Checking the addon version",
+    DEFAULT = true,
+    SECTION = "Main"
+})
+
 RDV.LIBRARY.AddConfigOption("IPI::MaximumDistance", { 
     TYPE = RDV.LIBRARY.TYPE.NM, 
     CATEGORY = CAT,
