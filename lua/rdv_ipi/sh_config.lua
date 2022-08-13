@@ -1,13 +1,11 @@
 local CAT = "Improved Prop Interact"
 
 RDV.LIBRARY.AddConfigOption("IPI::Enabling", { 
-    TYPE = RDV.LIBRARY.TYPE.NM, 
+    TYPE = RDV.LIBRARY.TYPE.BL, 
     CATEGORY = CAT,
     DESCRIPTION = "Enable or Disable this Module",
-    DEFAULT = 108,
-    SECTION = "Main",
-    MIN = 30,
-    MAX = 2000
+    DEFAULT = true,
+    SECTION = "Main"
 })
 
 RDV.LIBRARY.AddConfigOption("IPI::MaximumDistance", { 
