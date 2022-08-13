@@ -16,6 +16,7 @@ local function RetryConnection()
     end)
 end
 
+// Check Version
 function GetNewVersion()
     local your_version = 1.0
 
