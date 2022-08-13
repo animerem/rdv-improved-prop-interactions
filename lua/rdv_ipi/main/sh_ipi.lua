@@ -11,7 +11,7 @@ end
 local function RetryConnection()
     if timer.Exists("IPI::GetNewVersion") then return end
     timer.Create("IPI::GetNewVersion", 5, 0, function()
-        print("[RDV] Error getting new version!!!")
+        print("[IPI] VERSION CHECK ERROR!!!")
         GetNewVersion()
     end)
 end
@@ -19,7 +19,6 @@ end
 function GetNewVersion()
     timer.Simple(5, function()
         if RDV.LIBRARY.GetConfigOption("IPI::CheckVersion") then
-
             local your_version = "1.0"
 
             http.Fetch("https://raw.githubusercontent.com/animerem/addons-version-check/main/checkversion.txt", 
