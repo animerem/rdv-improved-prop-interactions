@@ -16,37 +16,30 @@ local function RetryConnection()
     end)
 end
 
-// Check Version
 function GetNewVersion()
-    local your_version = 1.0
+    timer.Simple(5, function()
+        if RDV.LIBRARY.GetConfigOption("IPI::CheckVersion") then
 
-    http.Fetch("https://raw.githubusercontent.com/animerem/addons-version-check/main/checkversion.txt", 
-        function(body)
-            local data = util.JSONToTable(body)["improved_prop_interact"]
+            local your_version = "3.0"
 
-            if data ~= your_version then
-                print("[IPI] YOU HAVE AN OLD VERSION")
-                print("[IPI] A NEW VERSION:", data)
-                if CLIENT then
-                    chat.AddText(Color(220,20,20), "[IPI] ", color_white, "YOU HAVE AN OLD VERSION")
-                    chat.AddText(Color(220,20,20), "[IPI] ", color_white, "A NEW VERSION: ", data)
+            http.Fetch("https://raw.githubusercontent.com/animerem/addons-version-check/main/checkversion.txt", 
+                function(body)
+                    local data = util.JSONToTable(body)["improved_prop_interact"]
+
+                    if data ~= your_version then
+                        print("[IPI] YOUR VERSION:", your_version)
+                        print("[IPI] A NEW VERSION:", data)
+                        if CLIENT then
+                            chat.AddText(Color(220,20,20), "[IPI] ", color_white, "YOUR VERSION: ", your_version)
+                            chat.AddText(Color(220,20,20), "[IPI] ", color_white, "A NEW VERSION: ", data)
+                        end
+                    end
+                end, 
+                function()
+                    RetryConnection()
                 end
-            end
-        end, 
-        function()
-            RetryConnection()
+            )
         end
-    )
+    end)
 end
-
-check = false
-hook.Add("Think", "CheckVersion", function()
-    if !RDV.LIBRARY.GetConfigOption("IPI::CheckVersion") then hook.Remove("Think", "CheckVersion") return false end
-    if !check then
-        timer.Simple(1, function()
-            GetNewVersion()
-            hook.Remove("Think", "CheckVersion")
-        end)
-        check = true
-    end
-end)
+GetNewVersion()
