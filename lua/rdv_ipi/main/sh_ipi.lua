@@ -20,7 +20,7 @@ function GetNewVersion()
     timer.Simple(5, function()
         if RDV.LIBRARY.GetConfigOption("IPI::CheckVersion") then
 
-            local your_version = "3.0"
+            local your_version = "1.0"
 
             http.Fetch("https://raw.githubusercontent.com/animerem/addons-version-check/main/checkversion.txt", 
                 function(body)
