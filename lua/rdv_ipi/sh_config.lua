@@ -65,3 +65,19 @@ RDV.LIBRARY.AddConfigOption("IPI::CarryStrength", {
     MIN = 0,
     MAX = 100
 })
+
+RDV.LIBRARY.AddConfigOption("IPI::HaloEnabling", { 
+    TYPE = RDV.LIBRARY.TYPE.BL, 
+    CATEGORY = CAT,
+    DESCRIPTION = "Stroke of the prop that was picked up",
+    DEFAULT = true,
+    SECTION = "Halo"
+})
+
+RDV.LIBRARY.AddConfigOption("IPI::HaloColor", { 
+    TYPE = RDV.LIBRARY.TYPE.CO, 
+    CATEGORY = CAT,
+    DESCRIPTION = "Stroke color",
+    DEFAULT = Color(200, 20, 20),
+    SECTION = "Halo"
+})

@@ -61,3 +61,12 @@ hook.Add("CalcView", "IPI::CalcView", function(ply, ori, ang)
         return {angles = angCamera_Current}
     end
 end)
+
+hook.Add( "PreDrawHalos", "IPI::PreDrawHalos", function(self)
+    if !RDV.LIBRARY.GetConfigOption("IPI::Enabling") then return end
+    if !RDV.LIBRARY.GetConfigOption("IPI::HaloEnabling") then return end
+
+    if eCurrent_Prop ~= nil then
+	    halo.Add( { eCurrent_Prop }, RDV.LIBRARY.GetConfigOption("IPI::HaloColor"), 5, 5, 2 )
+    end
+end )
