@@ -6,6 +6,13 @@ local bProp_Interact = false
 local eCurrent_Prop = {}
 local plyLocal = {}
 
+function W(w)
+    return ScrW()*(w/ScrW())
+end
+function H(h)
+    return ScrH()*(h/ScrH())
+end
+
 net.Receive("IPI::NetworkString", function()        
     bProp_Interact = net.ReadBool()
     plyLocal = LocalPlayer()
@@ -62,11 +69,11 @@ hook.Add("CalcView", "IPI::CalcView", function(ply, ori, ang)
     end
 end)
 
-hook.Add( "PreDrawHalos", "IPI::PreDrawHalos", function(self)
+hook.Add("PreDrawHalos", "IPI::PreDrawHalos", function()
     if !RDV.LIBRARY.GetConfigOption("IPI::Enabling") then return end
     if !RDV.LIBRARY.GetConfigOption("IPI::HaloEnabling") then return end
 
     if eCurrent_Prop ~= nil then
 	    halo.Add( { eCurrent_Prop }, RDV.LIBRARY.GetConfigOption("IPI::HaloColor"), 5, 5, 2 )
     end
-end )
+end)
