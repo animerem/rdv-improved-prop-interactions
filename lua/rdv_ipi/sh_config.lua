@@ -97,3 +97,12 @@ RDV.LIBRARY.AddConfigOption("IPI::VisualPressUSEColor", {
     DEFAULT = Color(255, 235, 15),
     SECTION = "Visual"
 })
+
+RDV.LIBRARY.AddConfigOption("IPI::VisualPressUSEVariants", { 
+    TYPE = RDV.LIBRARY.TYPE.SE, 
+    CATEGORY = CAT,
+    LIST = {"Default", "Two"},
+    DESCRIPTION = "Button visual options",
+    DEFAULT = "Default",
+    SECTION = "Visual"
+})

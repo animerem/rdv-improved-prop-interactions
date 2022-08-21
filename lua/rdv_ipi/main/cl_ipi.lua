@@ -104,15 +104,27 @@ hook.Add("HUDPaint", "IPI::PropInteract", function()
     end
 
     if lerp_alpha > 1 then
-        surface.SetFont("IPI:Font")
-        local use = string.upper(input.LookupBinding('+use'))
-        local text = string.format("Нажмите %s чтобы поднять", use)
-        local textw = surface.GetTextSize(text)
-        local w, h = 50, 50
+        if RDV.LIBRARY.GetConfigOption("IPI::VisualPressUSEVariants") == "Default" then
+            surface.SetFont("IPI:Font")
+            local use = string.upper(input.LookupBinding('+use'))
+            local text = string.format("Нажмите %s чтобы поднять", use)
+            local textw = surface.GetTextSize(text)
+            local w, h = 50, 50
 
-        draw.RoundedBox(5, (ScrW()*0.513-W(w))-textw/2, ScrH()*0.84-H(h), W(w)+textw, H(h), Color(20,20,20,math.Clamp(lerp_alpha,0,200)))
+            draw.RoundedBox(5, (ScrW()*0.513-W(w))-textw/2, ScrH()*0.84-H(h), W(w)+textw, H(h), Color(20,20,20,math.Clamp(lerp_alpha,0,200)))
 
-        local color = RDV.LIBRARY.GetConfigOption("IPI::VisualPressUSEColor")
-        draw.SimpleText(text, "IPI:Font", ScrW()*0.5, ScrH()*0.8, Color(color.r,color.g,color.b,lerp_alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+            local color = RDV.LIBRARY.GetConfigOption("IPI::VisualPressUSEColor")
+            draw.SimpleText(text, "IPI:Font", ScrW()*0.5, ScrH()*0.8, Color(color.r,color.g,color.b,lerp_alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+        elseif RDV.LIBRARY.GetConfigOption("IPI::VisualPressUSEVariants") == "Two" then
+            local use = string.upper(input.LookupBinding('+use'))
+
+            local w, h = 70, 70
+            draw.RoundedBox(5, (ScrW()*0.513-W(w)), ScrH()*0.84-H(h), W(w), H(h), Color(0,0,0,math.Clamp(lerp_alpha,0,255)))
+            draw.RoundedBox(5, (ScrW()*0.513-W(w-10/2)), ScrH()*0.84-H(h-10/2), W(w-10), H(h-10), Color(212,212,212,math.Clamp(lerp_alpha,0,255)))
+            draw.RoundedBox(5, (ScrW()*0.513-W(w-20/2)), ScrH()*0.84-H(h-20/2), W(w-20), H(h-20), Color(0,0,0,math.Clamp(lerp_alpha,0,255)))
+
+            local color = RDV.LIBRARY.GetConfigOption("IPI::VisualPressUSEColor")
+            draw.SimpleText(use, "IPI:Font", ScrW()*0.5-W(12), ScrH()*0.8-H(10), Color(color.r,color.g,color.b,lerp_alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+        end
     end
 end)
