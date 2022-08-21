@@ -81,3 +81,19 @@ RDV.LIBRARY.AddConfigOption("IPI::HaloColor", {
     DEFAULT = Color(200, 20, 20),
     SECTION = "Halo"
 })
+
+RDV.LIBRARY.AddConfigOption("IPI::VisualPressUSE", { 
+    TYPE = RDV.LIBRARY.TYPE.BL, 
+    CATEGORY = CAT,
+    DESCRIPTION = "Raise button on hover",
+    DEFAULT = true,
+    SECTION = "Visual"
+})
+
+RDV.LIBRARY.AddConfigOption("IPI::VisualPressUSEColor", { 
+    TYPE = RDV.LIBRARY.TYPE.CO, 
+    CATEGORY = CAT,
+    DESCRIPTION = "Text color",
+    DEFAULT = Color(255, 235, 15),
+    SECTION = "Visual"
+})
