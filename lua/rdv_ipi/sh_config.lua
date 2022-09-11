@@ -34,16 +34,6 @@ RDV.LIBRARY.AddConfigOption("IPI::MaximumDistance", {
     MAX = 2000
 })
 
-RDV.LIBRARY.AddConfigOption("IPI::MinimumDistance", { 
-    TYPE = RDV.LIBRARY.TYPE.NM, 
-    CATEGORY = CAT,
-    DESCRIPTION = "How close by a player can be to interact with a prop",
-    DEFAULT = 60,
-    SECTION = "Main",
-    MIN = 30,
-    MAX = 2000
-})
-
 RDV.LIBRARY.AddConfigOption("IPI::AngSensitivity", { 
     TYPE = RDV.LIBRARY.TYPE.NM, 
     CATEGORY = CAT,
