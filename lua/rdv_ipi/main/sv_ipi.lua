@@ -6,10 +6,16 @@ local function IsSmallProp(prop)
     return prop:GetPhysicsObject():GetMass() <= 35
 end
 
-local function IsPropInRange(ply)
-    local dist = ply.fProp_Dist
+local function IsPropNear(ply)
+    local dist
 
-    if dist < RDV.LIBRARY.GetConfigOption("IPI::MaximumDistance") and dist >= RDV.LIBRARY.GetConfigOption("IPI::MinimumDistance") then
+    if ply:IsBot() then
+        dist = ply.fBot_PropMaxDist
+    else
+        dist = RDV.LIBRARY.GetConfigOption("IPI::MaximumDistance")
+    end
+
+    if ply.fProp_Dist < dist then
         return true
     end
 
@@ -17,9 +23,15 @@ local function IsPropInRange(ply)
 end
 
 local function IsPropCarriable(ply, ent)
-    local mass = 35 * RDV.LIBRARY.GetConfigOption("IPI::CarryStrength")
+    local mass
+    
+    if ply:IsBot() then
+        mass = ply.fBot_PropCarryStrength
+    else
+        mass = RDV.LIBRARY.GetConfigOption("IPI::CarryStrength")
+    end
 
-    if mass >= ent:GetPhysicsObject():GetMass() then
+    if 35 * mass >= ent:GetPhysicsObject():GetMass() then
         return true
     else
         return false
@@ -42,11 +54,25 @@ end
 // Player Prop Manipulation
 
 local function ThrowProp(ent, ply)
-    ent:GetPhysicsObject():SetVelocity(ply:GetAimVector() * RDV.LIBRARY.GetConfigOption("IPI::ThrowPower") + ply:GetVelocity())
+    local power
+
+    if ply:IsBot() then
+        power = ply.fBot_PropThrowPower
+    else
+        power = RDV.LIBRARY.GetConfigOption("IPI::ThrowPower")
+    end
+
+    ent:GetPhysicsObject():SetVelocity(ply:GetAimVector() * power + ply:GetVelocity())
 end
 
-local function RotateProp(ang, x, y)
-    local sense = 10 / RDV.LIBRARY.GetConfigOption("IPI::AngSensitivity")
+local function RotateProp(ply, ang, x, y)
+    local sense
+    
+    if ply:IsBot() then
+        sense = 10 / ply.fBot_PropAngSense
+    else
+        sense = 10 / RDV.LIBRARY.GetConfigOption("IPI::AngSensitivity")
+    end
 
     ang:RotateAroundAxis(Vector(0, 0, 1), x / sense)
     ang:RotateAroundAxis(Vector(0, -1, 0), y / sense)
@@ -65,7 +91,7 @@ local function hook_prop_interact_use(ply, item)
 
         ply.fProp_Dist = (tr.HitPos - ply:EyePos()):Length()   
 
-        if IsPropInRange(ply) then
+        if IsPropNear(ply) then
             if not IsPropCarriable(ply, item) then
                 NudgeProp(item, ply, tr)
             end 
@@ -81,6 +107,15 @@ end
 
 // Server-Side Hooks
 
+hook.Add("PlayerInitialSpawn", "IPI::PlayerInitialSpawn", function(ply, trans)
+    if not trans and ply:IsBot() then
+        ply.fBot_PropAngSense = 1
+        ply.fBot_PropCarryStrength = 1
+        ply.fBot_PropThrowPower = 1
+        ply.fBot_PropMaxDist = 108
+    end
+end)
+
 hook.Add("KeyPress", "IPI::KeyPress", function(ply, key)
     if !RDV.LIBRARY.GetConfigOption("IPI::Enabling") then return end
 
@@ -93,7 +128,7 @@ hook.Add("KeyPress", "IPI::KeyPress", function(ply, key)
                 if ply.bProp_Interact or ply.bProp_Interact_Physgun then return end
 
                 ply.fProp_Dist = (tr.HitPos - ply:EyePos()):Length()                    
-                if not IsPropInRange(ply) then return end
+                if not IsPropNear(ply) then return end
 
                 if IsPropCarriable(ply, ent) then
                     timer.Simple(0, function()
@@ -138,7 +173,7 @@ hook.Add("GetPreferredCarryAngles", "IPI::GetPreferredCarryAngles", function(ite
     local ucmd = ply:GetCurrentCommand()
 
     if ply:KeyDown(IN_RELOAD) then
-        RotateProp(ply.angProp_Current, ucmd:GetMouseX(), ucmd:GetMouseY())
+        RotateProp(ply, ply.angProp_Current, ucmd:GetMouseX(), ucmd:GetMouseY())
 
         ply:SetEyeAngles(ply.angPlayer_Current)
     else
@@ -162,24 +197,24 @@ hook.Add("OnPlayerPhysicsDrop", "IPI::OnPlayerPhysicsDrop", function(ply, item, 
     end
 end)
 
-// use fix
+local bVManipAnim_NoRun = false
 
-timer.Simple(0, function()
-    local useHooks = hook.GetTable().PlayerUse
+hook.Add("PlayerUse", "IPI::PlayerUse", function(ply, item)
+    bVManipAnim_NoRun = true
+    return hook_prop_interact_use(ply, item)
+end)
 
-    if useHooks then
-        for name, call in pairs(useHooks) do
-            local _call = call
-            call = function(ply, ent)
-                timer.Simple(0.5, function() _call(ply, ent) end)
-                return hook_prop_interact_use(ply, ent)
+timer.Simple(0.5, function()
+    local VManipUseHook = hook.GetTable().PlayerUse.VManip_UseAnim
+    if not VManipUseHook then return end
+
+    hook.Add("PlayerUse", "VManip_UseAnim", function(ply, ent)
+        if IsProp(ent) then
+            if not IsPropCarriable(ply, ent) then
+                return VManipUseHook(ply, ent)
             end
-
-            hook.Add("PlayerUse", name, call)
+        else
+            return VManipUseHook(ply, ent)
         end
-    else
-        hook.Add("PlayerUse", "IPI::PlayerUse", function(ply, item)
-            return hook_prop_interact_use(ply, item)
-        end)
-    end
+    end)
 end)

@@ -8,6 +8,14 @@ RDV.LIBRARY.AddConfigOption("IPI::Enabling", {
     SECTION = "Main"
 })
 
+RDV.LIBRARY.AddConfigOption("IPI::EnablingInteractRagdoll", { 
+    TYPE = RDV.LIBRARY.TYPE.BL, 
+    CATEGORY = CAT,
+    DESCRIPTION = "Enable or Disable interact Ragdoll",
+    DEFAULT = true,
+    SECTION = "Main"
+})
+
 RDV.LIBRARY.AddConfigOption("IPI::CheckVersion", { 
     TYPE = RDV.LIBRARY.TYPE.BL, 
     CATEGORY = CAT,

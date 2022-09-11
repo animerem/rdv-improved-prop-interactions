@@ -7,10 +7,10 @@ local eCurrent_Prop = nil
 local plyLocal = {}
 
 function W(w)
-    return ScrW()*(w/ScrW())
+    return ScrW()*(w/1920)
 end
 function H(h)
-    return ScrH()*(h/ScrH())
+    return ScrH()*(h/1080)
 end
 
 net.Receive("IPI::NetworkString", function()        
@@ -88,16 +88,33 @@ surface.CreateFont( "IPI:Font", {
 } )
 
 hook.Add("HUDPaint", "IPI::PropInteract", function()
+    if !LocalPlayer():Alive() then lerp_alpha = 0 return end
     if !RDV.LIBRARY.GetConfigOption("IPI::Enabling") then return end
     if !RDV.LIBRARY.GetConfigOption("IPI::VisualPressUSE") then return end
 
     local gc = {
-        "prop_physics", "prop_ragdoll"
+        "prop_physics", "prop_physics_multiplayer", "npc_turret_floor"
     }
+
+    if RDV.LIBRARY.GetConfigOption("IPI::EnablingInteractRagdoll") then
+        table.insert(gc, "prop_ragdoll")
+    else
+        if table.Count(gc) == 4 then
+            table.remove(gc, 4)
+        end
+    end
 
     if LocalPlayer():GetEyeTrace().Entity and IsValid(LocalPlayer():GetEyeTrace().Entity) and not LocalPlayer():InVehicle() and eCurrent_Prop == nil and LocalPlayer():GetPos():DistToSqr(LocalPlayer():GetEyeTrace().Entity:GetPos()) <= 120 * 120 then
         if table.HasValue(gc, LocalPlayer():GetEyeTrace().Entity:GetClass()) then
-            lerp_alpha = Lerp(FrameTime()*3, lerp_alpha or 0, 255)
+            local ent = LocalPlayer():GetEyeTrace().Entity
+            local phys = ent:GetPhysicsObject()
+            if IsValid(ent) and IsValid(phys) and (35 * RDV.LIBRARY.GetConfigOption("IPI::CarryStrength") > phys:GetMass() or IsSmallProp(ent)) then
+                --
+            else
+                lerp_alpha = Lerp(FrameTime()*3, lerp_alpha or 0, 255)
+            end
+        else
+            lerp_alpha = Lerp(FrameTime()*3, lerp_alpha or 0, 0)
         end
     else
         lerp_alpha = Lerp(FrameTime()*3, lerp_alpha or 0, 0)
